@@ -1,5 +1,20 @@
 ## Modul eq_web_responsive
 
+#### 06.12.2017
+#### Version 1.0.10
+##### FIX
+- Stand von Version 1.0.8 wieder hergestellt (in der .less Datei), da das Backend online nichtmehr korrekt angezeigt wurde.
+
+
+#### 30.11.2017
+#### Version 1.0.9
+##### CHG
+- Textfelder der Blöcke, in den Detailansichten oben rechts, werden nun mit Punkten "..." abgegürzt wenn der Inhalt zu lange ist.
+
+#### 16.11.2017
+#### Version 1.0.8
+##### CHG
+- Modul umbenannt zu Responsive Interface
 
 #### 11.08.2017
 #### Version 1.0.7

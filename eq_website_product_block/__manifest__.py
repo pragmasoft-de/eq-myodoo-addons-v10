@@ -20,17 +20,15 @@
 ##############################################################################
 
 {
-    'name': 'eq_website_product_block',
+    'name': 'Equitania Website Product Block',
     'license': 'AGPL-3',
-    'version': '1.0.0',
-    'description': """
-        Module Template for eq v10 modules
-    """,
+    'version': '1.0.1',
+    'description': "Fügt einen Bereich für Produktbeschreibungen in der Produktdetailansicht hinzu",
     'author': 'Equitania Software GmbH',
     'website': 'www.myodoo.de',
     'depends': ['base_setup', 'website_sale'],
-    'category' : 'General Improvements',
-    'summary': 'Module Template',
+    'category' : 'website sale',
+    'summary': 'Fügt einen Bereich für Produktbeschreibungen in der Produktdetailansicht hinzu',
 
     'data': [
         "templates.xml",

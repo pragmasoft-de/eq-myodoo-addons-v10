@@ -1,11 +1,19 @@
 ## eq_report_pattern 
 
+#### 16.11.2017
+#### Version 1.0.25
+##### CHG
+- Modul zu "Dokumenten Bausteine" umbenannt
+
+#### 09.10.2017
+#### Version 1.0.24
+##### CHG
+- Das Feld 'Zahlungen' (require_payment) wird jetzt unter dem Verkaufsteam im Tab 'Weitere Informationen' eingefügt => Änderung notwendig, da das Modul eq_sale die Kundenreferenz in die Auftragsmaske verschoben hat.
 
 #### 10.08.2017
 #### Version 1.0.22
 ##### FIX
 - Korrekturen für Dokumentenvorlage
-
 
 #### 02.08.2017
 #### Version 1.0.21

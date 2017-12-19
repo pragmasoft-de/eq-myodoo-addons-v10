@@ -28,13 +28,14 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
     _name = _inherit
 
-    customer_number = fields.Char(compute='_get_customer_number', reverse='_set_customer_number',
+    customer_number = fields.Char(compute='_get_customer_number', inverse='_set_customer_number',
                                   string=_('Customer Number'), store=False)
     cust_auto_ref = fields.Char(_('Customer Reference (automatically assigned)'), readonly=True, invisible=True)
     cust_no_auto_ref = fields.Char(_('Customer Reference (manually assigned)'), readonly=True, invisible=True)
     cust_ref_print = fields.Char(_('Customer Reference (used in reports)'), readonly=True, invisible=True)
     auto_customer_ref = fields.Boolean(compute='_auto_customer_ref', store=False, readonly=True, invisible=True)
 
+    @api.one
     @api.depends('cust_auto_ref', 'cust_no_auto_ref')
     def _get_customer_number(self):
         ir_values = self.env['ir.values']
@@ -173,3 +174,13 @@ class ResPartner(models.Model):
                 vals['cust_ref_print'] = vals['cust_auto_ref']
 
         return super(ResPartner, self).write(vals)
+
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    @api.model
+    def create(self, vals):
+        self = self.with_context(is_user=True)
+        res = super(ResUsers, self).create(vals)
+        return res

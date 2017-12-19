@@ -1,5 +1,66 @@
 ## Modul eq_purchase
 
+#### 22.11.2017
+#### Version 1.0.28
+##### CHG
+- Anpassung Mail ID + Identifikator.
+
+#### 21.11.2017
+#### Version 1.0.27
+##### CHG
+- Mailvorlage für Bestellung und RFQ (Angebotsanfrage) bearbeitet (nbsp entfernt; Schlussormel erweitert;)
+
+#### 21.11.2017
+#### Version 1.0.26
+##### CHG
+- Textänderung in Beschreibung der Params. Kein [equitania] Text mehr
+
+#### 16.11.2017
+#### Version 1.0.25
+##### CHG
+- Modul umbenannt zu Einkauf Optimierungen
+
+#### 07.11.2017
+#### Version 1.0.24
+##### CHG
+- Description angepasst.
+
+#### 06.11.2017
+#### Version 1.0.23
+##### CHG
+- Es wird nur das eingefügte Template zuvor entfernt.
+
+#### 06.11.2017
+#### Version 1.0.22
+##### ADD
+- Mail Template 'RFQ und Bestellung' hinzugefügt.
+
+#### 25.10.2017
+#### Version 1.0.21
+##### FIX
+- Ticket 4952: Angebotsanfrage ohne Positionen kann jetzt gelöscht werden.
+
+#### 18.09.2017
+#### Version 1.0.20
+##### CHG
+- Lieferantennumer in List View wieder hinzugefügt.
+
+#### 15.09.2017
+#### Version 1.0.19
+##### CHG
+- Lieferantennumer aus List View entfernt
+
+#### 15.09.2017
+#### Version 1.0.18
+##### CHG
+- Listview als Defaultansicht
+- Neue Felder für Listview
+
+
+#### 01.09.2017
+#### Version 1.0.17
+##### IMP
+- Einkaufs Report: Angleichung der Darstellung vom Summenblock zu den anderen Reports
 
 #### 02.08.2017
 #### Version 1.0.16

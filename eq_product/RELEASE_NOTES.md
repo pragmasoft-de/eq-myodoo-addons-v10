@@ -1,5 +1,47 @@
 ## Modul eq_product
 
+#### 21.11.2017
+#### Version 1.0.21
+##### CHG
+- Logik für Produktnummererzeugung in Datenmodell 'product.product' verschoben (vorher 'product.template').
+
+#### 20.11.2017
+#### Version 1.0.20
+##### CHG
+- Nummergenerator 'eq_product_no' wird automatisch erzeugt (über XML Datei).
+
+#### 17.11.2017
+#### Version 1.0.19
+##### CHG
+- Änderung der Logik für Generierung der Produktnummer
+
+#### 16.11.2017
+#### Version 1.0.18
+##### CHG
+- Umbenennen des Moduls von Produkt zu Produkt Optimierungen
+
+#### 07.11.2017
+#### Version 1.0.17
+##### FIX
+- Übersetzung Produktnummer angepasst.
+
+#### 06.11.2017
+#### Version 1.0.16
+##### FIX
+- Artikelnummer in Produktnummer umbenannt.
+
+#### 06.11.2017
+#### Version 1.0.15
+##### FIX
+- Feld 'default_code' wurde bei dem Modell product.product zusätzlich eingefügt, wodurch eine Diskrepanz entstanden ist.
+- Tree View Product Template Interne Referenz in 'Artieklnr.' umbenannt.
+
+#### 31.08.2017
+#### Version 1.0.13
+##### ADD
+- Jira-Issue OEMRP-46:Das Feld 'default_code' ist jetzt ein Constraint. Bei der Produktanlage müssen die Artieklnummer einzigartig sein.
+- Wichtig: Constraintdefinition erfolgt nur, wenn es bisher keine Produkte in der Datenbank gibt, welche gegen diese Constraint verstoßen.
+
 #### 09.08.2017
 #### Version 1.0.12
 ##### FIX

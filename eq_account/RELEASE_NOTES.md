@@ -1,5 +1,124 @@
 ## Modul eq_account
 
+#### 19.12.2017
+#### Version 1.0.37
+##### FIX
+- Mini Fix: RechnungsReport: Wenn mehrere Steuersätze verwendet werden.
+
+#### 19.12.2017
+#### Version 1.0.36
+##### CHG
+- Rechnungs-Report: Übersetzungen angepasst; Artikelnr. Zeile (Spalte) Hinzugefügt; Währungszeichen für "Einzelpreis" hinzugefügt
+
+#### 15.12.2017
+#### Version 1.0.35
+##### ADD
+- Rechnungszeilen um das Liefer + Leistungsdatum ergänzt, für Artikel die versendet werden können
+
+#### 24.11.2017
+#### Version 1.0.34
+##### CHG
+Anpassung IDs + Layout.
+
+#### 23.11.2017
+#### Version 1.0.33
+##### CHG
+Vorlage Rechnung - Footer angepasst (grauer HG - neu)
+
+#### 22.11.2017
+#### Version 1.0.32
+##### CHG
+- RechnungsReport: Zahlungskonditionen werden nun aus dem Text der Zahlungskondition gezogen, statt vorher aus dem Namen
+
+#### 22.11.2017
+#### Version 1.0.31
+##### CHG
+- Invoice Vorlage Default Template wird jetzt gezogen
+
+#### 22.11.2017
+#### Version 1.0.30
+##### CHG
+- Invoice Vorlage mit Footer versehen (einkommentiert)
+
+#### 22.11.2017
+#### Version 1.0.29
+##### CHG
+- Custom Layout entfernt.
+
+#### 22.11.2017
+#### Version 1.0.28
+##### CHG
+- Anpassung Mail ID
+
+#### 22.11.2017
+#### Version 1.0.27
+##### CHG
+- Wichtig: Rechnungsvorlage vor dem Update löschen. Dadurch wird das alte Template gelöscht und die Übersetzungen neu erstellt.
+- 'Übersetzung laden' überspielt nicht mehr die vorhandene Übersetzung.
+
+#### 21.11.2017
+#### Version 1.0.26
+##### CHG
+- invoice_send_by_email.xml bearbeitet (nbsp entfernt)
+
+#### 21.11.2017
+#### Version 1.0.25
+##### CHG
+- Löschfunktion mail.templates zu 'account' hinzugefügt.
+
+#### 16.11.2017
+#### Version 1.0.24
+##### CHG
+- Modul umbenannt in Finanzen (vorher: Account)
+
+#### 07.11.2017
+#### Version 1.0.23
+##### CHG
+- Description angepasst
+
+#### 06.11.2017
+#### Version 1.0.22
+##### CHG
+- Es wird nur das eingefügte Template zuvor entfernt.
+
+#### 06.11.2017
+#### Version 1.0.21
+##### ADD
+- Mail Template hinzugefügt 'Rechnung'.
+
+
+#### 11.10.2017
+#### Version 1.0.20
+##### ADD
+- Jira-Issue OE10-10: In den Rechnungsreport ein p-Element mit einer Abfrage auf die payment_term_id hinzugefügt, welcher für die fehlerfreie Installation von dem OCA-Modul
+account_payment_partner notwendig ist.
+
+#### 05.09.2017
+#### Version 1.0.19
+##### FIX
+- Feld 'eq_move_ids' hinzugefügt, welche bei Teillieferungen benötigt werden.
+
+#### 05.09.2017
+#### Version 1.0.18
+##### FIX
+- Im Bezug auf Jira Issue VEP-139 gab es den gleichen Fehler, allerdings bei einer Teillieferung. Dieser wurde durch eine angepasste Abfrage behoben.
+
+#### 31.08.2017
+#### Version 1.0.17
+##### ADD
+- Referenzbeleg und Referenznr. werden nun auf den Rechnungen angedruckt
+
+#### 28.08.2017
+#### Version 1.0.16
+##### FIX
+- Auftragszeilen werden nun auch gedruckt wenn die Option für die Kategorien(Sektionen) nicht aktiviert wurde
+
+#### 17.08.2017
+#### Version 1.0.15
+##### ADD
+- Sektionen für die Rechnungen sind nun eingebunden und funktionieren
+- Visuelle Anpassungen an dem Summenblock
+
 #### 09.08.2017
 #### Version 1.0.14
 ##### ADD

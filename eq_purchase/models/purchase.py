@@ -21,6 +21,8 @@
 
 from odoo import models, fields, api, _
 import odoo.addons.decimal_precision as dp
+import datetime
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as OE_DFORMAT
 
 
 class eq_purchase_order(models.Model):
@@ -33,10 +35,61 @@ class eq_purchase_order(models.Model):
 
     # Report
     show_planned_date = fields.Boolean(string='Show Planned Date')
-    use_calendar_week = fields.Boolean('Use Calendar Week for Planned Date [equitania]')
+    use_calendar_week = fields.Boolean('Use Calendar Week for Planned Date [eq_purchase]')
 
     eq_use_page_break_after_header = fields.Boolean(string='Page break after header text')
     eq_use_page_break_before_footer = fields.Boolean(string='Page break before footer text')
+
+    @api.multi
+    def action_rfq_send(self):
+        '''
+        This function opens a window to compose an email, with the edi purchase template message loaded by default
+        '''
+        self.ensure_one()
+        ir_model_data = self.env['ir.model.data']
+        try:
+            if self.env.context.get('send_rfq', False):
+                template_id = ir_model_data.get_object_reference('eq_purchase', 'email_template_edi_purchase_new')[1]
+            else:
+                template_id = ir_model_data.get_object_reference('eq_purchase', 'email_template_edi_purchase_done_new')[1]
+        except ValueError:
+            template_id = False
+        try:
+            compose_form_id = ir_model_data.get_object_reference('mail', 'email_compose_message_wizard_form')[1]
+        except ValueError:
+            compose_form_id = False
+        ctx = dict(self.env.context or {})
+        ctx.update({
+            'default_model': 'purchase.order',
+            'default_res_id': self.ids[0],
+            'default_use_template': bool(template_id),
+            'default_template_id': template_id,
+            'default_composition_mode': 'comment',
+        })
+        return {
+            'name': _('Compose Email'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(compose_form_id, 'form')],
+            'view_id': compose_form_id,
+            'target': 'new',
+            'context': ctx,
+        }
+
+
+    @api.depends('order_line.date_planned')
+    def _compute_date_planned(self):
+        for order in self:
+            min_date = False
+            for line in order.order_line:
+                if not min_date or line.date_planned < min_date:
+                    min_date = line.date_planned
+            if min_date:
+                order.date_planned = min_date
+            else:
+                order.date_planned = order.date_order
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
@@ -108,10 +161,10 @@ class eq_purchase_configuration_address(models.TransientModel):
         }
 
 
-    default_show_planned_date = fields.Boolean(string='Show the Planned Date on the Purchase Order [equitania]',
+    default_show_planned_date = fields.Boolean(string='Show the Planned Date on the Purchase Order [eq_purchase]',
                                                help='The planned date will be shown in the Purchase Order',
                                                default_model='purchase.order')
-    default_use_calendar_week = fields.Boolean('Show Calendar Week for Planned Date [equitania]',
+    default_use_calendar_week = fields.Boolean('Show Calendar Week for Planned Date [eq_purchase]',
                                                 help='The planned date will be shown as a calendar week',
                                                 default_model='purchase.order')
 

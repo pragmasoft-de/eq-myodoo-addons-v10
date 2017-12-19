@@ -1,5 +1,42 @@
 ## Modul eq_mail_extension
 
+#### 20.11.2017
+#### Version 1.0.31
+##### CHG
+- Mail Templates Editor nun Widget Text (Problem wurde festgetsellt, dass es wieder eine Autokorrektur innerhalb von Schleifen gab).
+
+#### 08.11.2017
+#### Version 1.0.30
+##### ADD
+- Rechte hinzugefügt.
+
+#### 07.11.2017
+#### Version 1.0.29
+##### ADD
+- Description angepasst.
+
+#### 06.11.2017
+#### Version 1.0.28
+##### CHG
+- Es wird nur das eingefügte Template zuvor entfernt.
+
+#### 06.11.2017
+#### Version 1.0.27
+##### ADD
+- Mail Template hinzugefügt 'Systembenachrichtigung'.
+
+#### 12.10.2017
+#### Version 1.0.26
+##### CHG
+- Ab jetzt wird auch Betreff der E-Mail korrekt gesetzt
+
+#### 10.10.2017
+#### Version 1.0.25
+##### CHG
+- VEP-146: Modul wandelt WYSIWYG-Editor nicht mehr in Text um
+- Menupunkt "E-Mail Einstellung" verschoben unter "Allgmeine Einstellungen"
+
+
 #### 28.07.2017
 #### Version 1.0.24
 ##### FIX
