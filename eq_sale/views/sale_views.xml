@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
     <data>
 
         <record id="eq_sale_stock_form_view" model="ir.ui.view">
@@ -14,7 +14,34 @@
 			</field>
 		</record>
 
+		<record id="eq_info_optional_form_view" model="ir.ui.view">
+			<field name="name">eq_info_optional.form.view</field>
+			<field name="model">eq_info_optional</field>
+			<field name="arch" type="xml">
+				<form version="7.0">
+                	<group>
+						<field name="eq_info_text" nolabel="1" readonly="1"/>
+					</group>
+					<footer>
+						<button name="action_done" type="object" string="Confirm"/> or <button name="cancel" type="special" string="Cancel"/>
+					</footer>
+				</form>
+			</field>
+		</record>
 
+		<record id="eq_sale_form_quote" model="ir.ui.view">
+            <field name="name">hide.preview_button</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="website_quote.sale_order_form_quote"/>
+            <field name="arch" type="xml">
+				<field name="carrier_id" position="after">
+                <field name="eq_show_preview_button" invisible="1"/>
+				</field>
+                <xpath expr="//header/button[@name='open_quotation']" position="replace">
+                    <button name="open_quotation" string="Preview" attrs="{'invisible': [('eq_show_preview_button', '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
 
 
         <record id="eq_sale_address_fields_view_order_form_inherit" model="ir.ui.view">
@@ -23,6 +50,29 @@
 	    	<field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
             	<!-- deactivate default version of address fields -->
+				<field name="client_order_ref" position="replace"/>
+				<xpath expr="//field[@name='payment_term_id']" position="after">
+					<field name="client_order_ref"/>
+				</xpath>
+
+				<!--<button name="open_quotation" position="replace">-->
+					<!--&lt;!&ndash;<button name="open_quotation" attrs="{'invisible': [('eq_show_preview_button', '=', True)]}"/>&ndash;&gt;-->
+				<!--</button>-->
+
+				<button name="action_confirm" states="draft" position="after">
+	            	<button name="action_button_confirm_optional" states="draft" class="o_sale_confirm" string="Confirm Sale" type="object" groups="base.group_user"/>
+	            </button>
+	            <button name="action_confirm" states="sent" position="after">
+	            	<button name="action_button_confirm_optional" states="sent" class="btn-primary o_sale_confirm"  string="Confirm Sale" type="object" groups="base.group_user"/>
+	            </button>
+
+				<button name="action_confirm" states="draft" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</button>
+				<button name="action_confirm" states="sent" position="attributes">
+					<attribute name="invisible">True</attribute>
+				</button>
+
                 <field name="partner_id" position="attributes">
                     <attribute name="context">{'search_default_customer':1, 'show_address': 0,'active_model':'sale.order','main_address': True}</attribute>
                     <attribute name="options">{'always_reload': True}</attribute>
@@ -38,9 +88,13 @@
 				<field name="note" position="replace"></field>
 				<notebook position="inside">
                     <page string="Head Text">
+						<field name="eq_use_page_break_after_header"></field>
+                    	<label string="Page break after header text"></label>
 						<field name="eq_head_text" placeholder="Dear Sir or Madam," nolabel="1"/>
                     </page>
                     <page string="Foot Text">
+						<field name="eq_use_page_break_before_footer"></field>
+                    	<label string="Page break before footer text"></label>
                     	<field name="note" nolabel="1"/>
                     </page>
             	</notebook>
@@ -72,8 +126,26 @@
             		<attribute name="editable"></attribute>
             	</xpath>
 
+				<xpath expr="//notebook/page/field[@name='order_line']/tree/field[@name='product_id']" position="after">
+					  <field name="eq_optional" invisible="1"/>
+				</xpath>
+
+				<xpath expr="//field[@name='order_line']/form/group" position="inside">
+					<group name="eq_optional">
+	                    <field name="eq_optional"/>
+					</group>
+				</xpath>
+
+				<xpath expr="//field[@name='order_line']/tree" position="attributes">
+					<attribute name="colors">blue:eq_optional!=False</attribute>
+				</xpath>
+
+
+
             </field>
 	    </record>
+
+
 
 		<record id="eq_view_sale_config_settings_show_address" model="ir.ui.view">
             <field name="name">eq_sale.config.address.product.settings</field>
@@ -82,16 +154,16 @@
             <field name="arch" type="xml">
                 <data>
                 	<xpath expr="//group[@name='customers']" position="inside">
-						<label string="Customer search settings [equitania]"/>
+						<label string="Customer search settings [eq_sale]"/>
 						<div>
 							<div>
 								<field name="default_show_address" class="oe_inline"/>
-								<label for="default_show_address" string="Show street and city in the partner search of the saleorder [equitania]"/>
+								<label for="default_show_address" string="Show street and city in the partner search of the saleorder [eq_sale]"/>
 							</div>
 
 							<div>
 								<field name="default_search_only_company" class="oe_inline"/>
-								<label for="default_search_only_company" string="Only search for Companies in the Sale Order/Quotation [equitania]"/>
+								<label for="default_search_only_company" string="Only search for Companies in the Sale Order/Quotation [eq_sale]"/>
 							</div>
 						</div>
 					</xpath>
@@ -116,6 +188,13 @@
 							<div>
 							<field name="default_eq_use_internal_description"/>
 							<label for="default_eq_use_internal_description"/>
+							</div>
+	                    </div>
+						<label string="Show Preview"/>
+	                    <div>
+							<div>
+							<field name="default_eq_show_preview_button"/>
+							<label for="default_eq_show_preview_button"/>
 							</div>
 	                    </div>
 					</xpath>
@@ -167,4 +246,4 @@
 
 
 	</data>
-</openerp>
+</odoo>

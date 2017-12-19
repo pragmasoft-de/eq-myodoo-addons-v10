@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
+<odoo>
     <data>
 
         <!-- Cost Price History Tree View -->
@@ -89,47 +89,28 @@
                             style="margin-left: 20px"/>
                 </field>
 
-
-                <xpath expr="//group//field[@name='default_code']" position="replace">
-                    <field name="eq_drawing_number"/>
-                    <!--<field name="eq_index"/>-->
-                </xpath>
-
-
                 <!-- code - Article no. -->
+                <field name="default_code" position="replace"/>
                 <xpath expr="//div[@class='oe_title']/h1" position="after">
-                    <field name="default_code" placeholder="Article No."/>
+                    <field name="default_code" placeholder="Product Number"/>
                 </xpath>
-
 
                 <field name="default_code" position="after">
-                    <button name="eq_product_number_update" string="Generate number" type="object"
-                            class="oe_edit_only oe_link oe_inline"/>
+                    <!--
+                    <button name="eq_product_number_update" string="Generate number" type="object" class="oe_edit_only oe_link oe_inline"/>
+                    -->
+                    <div class="oe_edit_only oe_link oe_inline">Number is generated automatically, if not specified</div>
                     <newline/>
                 </field>
 
-                <!--<group name="store" position="replace">-->
-                <!--</group>-->
+
+                <xpath expr="//page[@name='general_information']/group" position="after">
+                    <field name="description" placeholder="Describe the product characteristics..." />
+                </xpath>
+
             </field>
         </record>
 
-        <record id="eq_product_template_search_view" model="ir.ui.view">
-            <field name="name">eq.product.template.product.search</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_search_view"/>
-            <field name="arch" type="xml">
-                <!--<field name="name" position="replace">-->
-                <!--<field name="name" string="Product" filter_domain="['|',('default_code','ilike',self),('name','ilike',self)]"/>-->
-                <!--<field name="name" string="Name"/>-->
-                <!--</field>-->
-                <field name="pricelist_id" position="after">
-                    <!--<field name="default_code"/>-->
-                    <field name="eq_drawing_number"/>
-                    <!--<field name="eq_internal_number"/>-->
-                    <!--<field name="eq_index"/>-->
-                </field>
-            </field>
-        </record>
 
         <!-- Product Product - form view -->
         <record id="eq_product_product_form_view" model="ir.ui.view">
@@ -138,40 +119,42 @@
             <field name="inherit_id" ref="product.product_normal_form_view"/>
             <field name="arch" type="xml">
                 <!-- add only our 2 main fields and remove default_code..will be added below -->
-                <xpath expr="//group//field[@name='default_code']" position="replace">
-                    <field name="eq_drawing_number" class="eq_db_variant"/>
-                </xpath>
+
                 <!-- code - Article no. -->
+                <field name="default_code" position="replace"/>
                 <xpath expr="//div[@class='oe_title']/h1" position="after">
-                    <field name="default_code" placeholder="Article No."/>
+                    <field name="default_code" placeholder="Product Number"/>
+                </xpath>
+
+                <xpath expr="//page[@name='general_information']/group" position="after">
+                    <field name="description" placeholder="Describe the product characteristics..." />
                 </xpath>
 
 
                 <!--Button Generate number-->
 
+
                 <field name="default_code" position="after">
-                    <button name="eq_product_number_update" string="Generate number" type="object"
-                            class="oe_edit_only oe_link oe_inline"/>
+                    <!--
+                    <button name="eq_product_number_update" string="Generate number" type="object" class="oe_edit_only oe_link oe_inline"/>
+                    -->
+                    <div class="oe_edit_only oe_link oe_inline">Number is generated automatically, if not specified</div>
                     <newline/>
                 </field>
-
-                <!--<xpath expr="//div[@class='oe_title']" position="replace">-->
-                <!--<div class="oe_title" style="width: 390px;">-->
-                <!--<h3>-->
-                <!--<div>-->
-                <!--<field name="default_code" class="oe_form_required"/>-->
-                <!--<button name="eq_product_number_update" string="Generate number" type="object" class="oe_edit_only oe_link oe_inline"/>-->
-                <!--<newline/>-->
-                <!--</div>-->
-                <!--&lt;!&ndash; removed standard css class to archive bigger width for name &ndash;&gt;-->
-                <!--<field name="name"  modifiers="{'required': true}"/>-->
-                <!--</h3>-->
-                <!--<field name="attribute_value_ids" widget="many2many_tags"/>-->
-                <!--</div>-->
-                <!--</xpath>-->
 
             </field>
         </record>
 
+         <record id="eq_product_template_tree_view" model="ir.ui.view">
+            <field name="name">eq.product.template.tree.view</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="default_code" position="replace">
+                    <field name="default_code" string="Product Number"/>
+                </field>
+            </field>
+         </record>
+
     </data>
-</openerp>
+</odoo>

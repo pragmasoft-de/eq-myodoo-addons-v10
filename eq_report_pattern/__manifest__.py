@@ -20,35 +20,27 @@
 ##############################################################################
 
 {
-    'name': 'Equitania Report Pattern',
+    'name': 'Equitania Dokumenten Bausteine',
     'license': 'AGPL-3',
-    'version': '1.0.9',
+    'version': '1.0.25',
     'description': """
-        Equitania Software GmbH
+        Improves the odoo document templating, overwrites head- and foot-texttemplates
     """,
     'author': 'Equitania Software GmbH',
     'website': 'www.myodoo.de',
-    'depends': ['base', 'base_setup', 'website_quote', 'sale', 'stock', 'purchase', 'sales_team', 'account', 'eq_sale', 'eq_purchase', 'eq_account', 'eq_sale_stock'],
+    'depends': ['base', 'base_setup', 'website_quote', 'stock', 'sales_team', 'eq_sale', 'eq_purchase', 'eq_account'],
     'category' : 'Reports',
-    #What it Improves e.g Sale, Purchase, Accounting
     'summary': '',
-    #Only on initialization
-    #'init': [
-    #          
-    #         ],
     'data': [
             'security/ir.model.access.csv',
-            'views/eq_report_stockpicking.xml',
             'views/document_template_view.xml',
             'views/sale_view.xml',
             'views/purchase_view.xml',
             'views/stock_picking_view.xml',
             'views/account_invoice_view.xml',
+            'views/res_partner_view.xml',
     ],
-    #Demodata
     'demo': [],
-    #Activates css for the view
-    #'css': ['base.css'],
     'installable': True,
     'auto_install': False,
 }

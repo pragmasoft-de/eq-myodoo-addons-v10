@@ -25,3 +25,5 @@ import eq_delivery_condition
 import res_partner
 import sale
 import sale_layout
+import eq_report_sale_order
+import eq_email_template_new

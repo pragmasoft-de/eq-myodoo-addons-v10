@@ -19,4 +19,5 @@
 #
 ##############################################################################
 
-#import module
+import eq_report_stock
+import eq_stock_picking

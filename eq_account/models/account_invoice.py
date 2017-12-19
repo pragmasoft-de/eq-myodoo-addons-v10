@@ -25,6 +25,35 @@ from odoo import models, fields, api, _
 class eq_account_invoice(models.Model):
     _inherit = 'account.invoice'
 
+    @api.multi
+    def action_invoice_sent(self):
+        """ Open a window to compose an email, with the edi invoice template
+            message loaded by default
+        """
+        self.ensure_one()
+        template = self.env.ref('eq_account.edi_invoice_template', False)
+        compose_form = self.env.ref('mail.email_compose_message_wizard_form', False)
+        ctx = dict(
+            default_model='account.invoice',
+            default_res_id=self.id,
+            default_use_template=bool(template),
+            default_template_id=template and template.id or False,
+            default_composition_mode='comment',
+            mark_invoice_as_sent=True,
+            custom_layout="eq_account.eq_email_template_data_invoice"
+        )
+        return {
+            'name': _('Compose Email'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(compose_form.id, 'form')],
+            'view_id': compose_form.id,
+            'target': 'new',
+            'context': ctx,
+        }
+
     @api.one
     def _compute_street_house_no(self):
         """ Generate street and house no info for account_invoice """
@@ -64,3 +93,5 @@ class eq_account_invoice(models.Model):
     eq_country = fields.Char(compute='_compute_country', string=" ", store=False)
     eq_head_text = fields.Html('Head Text')
     comment = fields.Html('Additional Information')
+    eq_use_page_break_after_header = fields.Boolean(string='Page break after header text')
+    eq_use_page_break_before_footer = fields.Boolean(string='Page break before footer text')

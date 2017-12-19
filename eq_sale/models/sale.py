@@ -35,6 +35,45 @@ class eq_sale_order_extension(models.Model):
         #                               states={'draft': [('readonly', False)], 'sent': [('readonly', False)]},
         #                               required=True, change_default=True, select=True, track_visibility='always'),
 
+    eq_use_page_break_after_header = fields.Boolean(string='Page break after header text')
+    eq_use_page_break_before_footer = fields.Boolean(string='Page break before footer text')
+    eq_show_preview_button = fields.Boolean(default=False)
+
+    @api.multi
+    def action_quotation_send(self):
+        '''
+        This function opens a window to compose an email, with the edi sale template message loaded by default
+        '''
+        self.ensure_one()
+        ir_model_data = self.env['ir.model.data']
+        try:
+            template_id = ir_model_data.get_object_reference('eq_sale', 'new_email_template_edi_sale')[1]
+        except ValueError:
+            template_id = False
+        try:
+            compose_form_id = ir_model_data.get_object_reference('mail', 'email_compose_message_wizard_form')[1]
+        except ValueError:
+            compose_form_id = False
+        ctx = dict()
+        ctx.update({
+            'default_model': 'sale.order',
+            'default_res_id': self.ids[0],
+            'default_use_template': bool(template_id),
+            'default_template_id': template_id,
+            'default_composition_mode': 'comment',
+            'mark_so_as_sent': True,
+            'custom_layout': "eq_sale.eq_data_template_mail"
+        })
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(compose_form_id, 'form')],
+            'view_id': compose_form_id,
+            'target': 'new',
+            'context': ctx,
+        }
 
 
     @api.onchange('partner_id')
@@ -215,7 +254,92 @@ class eq_sale_order_extension(models.Model):
 
     # Report
     show_delivery_date = fields.Boolean(string='Show Delivery Date')
-    use_calendar_week = fields.Boolean('Use Calendar Week for Delivery Date[equitania]')
+    use_calendar_week = fields.Boolean('Use Calendar Week for Delivery Date[eq_sale]')
+
+    @api.depends('order_line.price_total')
+    def _amount_all(self):
+        """
+        _amount_all überschrieben für Abzug der optionalen Positionen
+        :return:
+        """
+        cur_obj = self.pool.get('res.currency')
+        super(eq_sale_order_extension, self)._amount_all()
+        for order in self:
+            val1 = 0
+            val = 0
+            cur = order.pricelist_id.currency_id
+            for line in order.order_line:
+                if line.eq_optional:
+                    val1 += line.price_subtotal
+
+                    if order.company_id.tax_calculation_rounding_method == 'round_globally':
+                        price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+                        taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty,
+                                                        product=line.product_id, partner=order.partner_shipping_id)
+                        val += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
+                    else:
+                        val += line.price_tax
+
+            amount_tax_new = order.amount_tax - cur.round(val)
+            amount_untaxed_new = order.amount_untaxed - cur.round(val1)
+
+            order.update({
+                'amount_untaxed': order.pricelist_id.currency_id.round(amount_untaxed_new),
+                'amount_tax': order.pricelist_id.currency_id.round(amount_tax_new),
+                'amount_total': amount_untaxed_new + amount_tax_new,
+            })
+
+
+
+
+    @api.multi
+    def action_button_confirm_optional(self):
+        """
+        Bestätigung des Auftrags mit Berücksichtigung der optionalen Positionen
+        Einblendung eines Dialogs, falls optionale Positionen gefunden werden
+        :return:
+        """
+        warning_msgs = False
+        for line in self.order_line:
+            if line.eq_optional:
+                warning_msgs = True
+
+        if warning_msgs:
+            vals = {
+                'eq_info_text': _("All the optional positions will be removed."),
+                'eq_sale_id': self.id,
+            }
+            new_popup = self.env['eq_info_optional'].create(vals)
+            view = self.env.ref('eq_sale.eq_info_optional_form_view')
+            return {
+                'name': _('The order contains optional positions!'),
+                'view_type': 'form',
+                'view_mode': 'form',
+                'view_id': view.id,
+                'res_model': 'eq_info_optional',
+                'context': "{}",
+                'type': 'ir.actions.act_window',
+                'nodestroy': True,
+                'target': 'new',
+                'res_id': new_popup.id,
+            }
+        else:
+            return self.action_confirm()
+
+
+class eq_info_optional(models.TransientModel):
+    _name = 'eq_info_optional'
+
+    eq_info_text = fields.Text()
+    eq_sale_id = fields.Many2one('sale.order')
+
+    @api.multi
+    def action_done(self):
+        for line in self.eq_sale_id.order_line:
+            if line.eq_optional:
+                line.unlink()
+        self.eq_sale_id.action_confirm()
+        return True
 
 
 class eq_sale_configuration_address(models.TransientModel):
@@ -230,6 +354,7 @@ class eq_sale_configuration_address(models.TransientModel):
         ir_values_obj.set_default('sale.order', 'default_search_only_company', self.default_search_only_company or False)
         ir_values_obj.set_default('sale.order', 'show_delivery_date', self.default_show_delivery_date)
         ir_values_obj.set_default('sale.order', 'use_calendar_week', self.default_use_calendar_week)
+        ir_values_obj.set_default('sale.order', 'eq_show_preview_button', self.default_eq_show_preview_button)
         ir_values_obj.set_default('sale.order.line', 'eq_use_internal_description', self.default_eq_use_internal_description)
 
         ir_config_obj.set_param('eq.use.text.from.order', self.eq_use_text_from_order)
@@ -245,6 +370,7 @@ class eq_sale_configuration_address(models.TransientModel):
         show_delivery_date = ir_values_obj.get_default('sale.order', 'show_delivery_date')
         use_calendar_week = ir_values_obj.get_default('sale.order', 'use_calendar_week')
         eq_use_internal_description = ir_values_obj.get_default('sale.order.line', 'eq_use_internal_description')
+        eq_show_preview_button = ir_values_obj.get_default('sale.order','eq_show_preview_button')
 
         eq_use_text_from_order = ir_config_obj.get_param('eq.use.text.from.order')
         eq_head_text_invoice = ir_config_obj.get_param('eq.head.text.invoice')
@@ -256,32 +382,46 @@ class eq_sale_configuration_address(models.TransientModel):
             'default_show_delivery_date': show_delivery_date,
             'default_use_calendar_week': use_calendar_week,
             'default_eq_use_internal_description': eq_use_internal_description,
+            'default_eq_show_preview_button': eq_show_preview_button,
             'eq_use_text_from_order': eq_use_text_from_order,
             'eq_head_text_invoice': eq_head_text_invoice,
             'eq_foot_text_invoice': eq_foot_text_invoice,
         }
 
+    @api.onchange('default_eq_show_preview_button')
+    def onchange_default_eq_show_preview_button(self):
+        sale_order_objs = self.env['sale.order'].search([])
+        if self.default_eq_show_preview_button:
+            for sale_order_obj in sale_order_objs:
+                values = {'eq_show_preview_button': True}
+                sale_order_obj.write(values)
+        else:
+            for sale_order_obj in sale_order_objs:
+                values = {'eq_show_preview_button' : False}
+                sale_order_obj.write(values)
+
+
     default_show_address = fields.Boolean(
-            string='Show street and city in the partner search of the Sale and Purchase Order [equitania]',
+            string='Show street and city in the partner search of the Sale and Purchase Order [eq_sale]',
             help="This adds the street and the city to the results of the partner search of the Sale and Purchase Order.")
-    default_search_only_company = fields.Boolean(string='Only Search for Companies [equitania]',
+    default_search_only_company = fields.Boolean(string='Only Search for Companies [eq_sale]',
                                                       help="Only Companies will be shown in the Customer search of the Sale and Purchase Order.")
-    group_product_rrp = fields.Boolean(string='Show RRP for products [equitania]', implied_group='eq_sale.group_product_rrp')
-    default_show_delivery_date = fields.Boolean(string='Show the Delivery Date on the Sale Order [equitania]',
+    group_product_rrp = fields.Boolean(string='Show RRP for products [eq_sale]', implied_group='eq_sale.group_product_rrp')
+    default_show_delivery_date = fields.Boolean(string='Show the Delivery Date on the Sale Order [eq_sale]',
                                                  help='The delivery date will be shown in the Sale Order',
                                                  default_model='sale.order')
-    default_use_calendar_week = fields.Boolean('Show Calendar Week for Delivery Date [equitania]',
+    default_use_calendar_week = fields.Boolean('Show Calendar Week for Delivery Date [eq_sale]',
                                                 help='The delivery date will be shown as a calendar week',
                                                 default_model='sale.order')
-    default_eq_use_internal_description = fields.Boolean('Use internal description for sale orders [equitania]',
+    default_eq_use_internal_description = fields.Boolean('Use internal description for sale orders [eq_sale]',
                                                           help='The internal description will be used for sale orders not the sale description',
                                                           default_model='sale.order.line')
-
-    eq_use_text_from_order = fields.Boolean(string="Use text from order [equitania]", required=False,
+    default_eq_show_preview_button = fields.Boolean(string="Show Preview-Button in Sale Order [eq_sale]")  # Angebots-Preview Button
+    eq_use_text_from_order = fields.Boolean(string="Use text from order [eq_sale]", required=False,
                                             default=False)  # Benutze Kopf- und Fusstext aus Auftrag
-    eq_head_text_invoice = fields.Html(string="Invoice head text [equitania]", required=False,
+    eq_head_text_invoice = fields.Html(string="Invoice head text [eq_sale]", required=False,
                                        default="")  # Kopftext - kann überall verwendet werden und ersetzt dadurch Odoo Standard
-    eq_foot_text_invoice = fields.Html(string="Invoice foot text [equitania]", required=False, default="")
+    eq_foot_text_invoice = fields.Html(string="Invoice foot text [eq_sale]", required=False, default="")
 
 
 class eq_sale_order_line(models.Model):
@@ -290,8 +430,7 @@ class eq_sale_order_line(models.Model):
     @api.multi
     def _get_delivery_date(self):
         """
-        Hilfsfunktion für Report für Ermittlung des Lieferdatums
-        Aktuell wird Feld show_delivery_date der sale_order nicht gesetzt -> Rückgabe immer false
+        Darstellung des Lieferdatums in Abhängigkeit der Reporteinstellungen
         :return:
         """
         result = {}
@@ -314,21 +453,34 @@ class eq_sale_order_line(models.Model):
 
 
     # ODOO 10: Feld delay fehlt für sale_order_line
-    # @api.onchange('eq_delivery_date')
-    # def on_change_delivery_date(self):
-    #     """
-    #
-    #     :return:
-    #     """
-    #
-    #     date_order = self.order_id.date_order if self.order_id else False
-    #     if date_order and self.eq_delivery_date:
-    #         date_order = datetime.strptime(date_order.split(' ')[0], OE_DFORMAT)
-    #         eq_delivery_date = datetime.strptime(eq_delivery_date, OE_DFORMAT)
-    #
-    #         self.delay = (eq_delivery_date - date_order).days
+    @api.onchange('eq_delivery_date')
+    def on_change_delivery_date(self):
+        """
+        Änderung des Lieferdatums ändert "Tage bis Auslieferung"
+        """
 
+        date_order = self.order_id.date_order if self.order_id else False
+        if date_order and self.eq_delivery_date:
+            date_order = datetime.strptime(date_order.split(' ')[0], OE_DFORMAT)
+            eq_delivery_date = datetime.strptime(self.eq_delivery_date, OE_DFORMAT)
+            new_customer_lead = (eq_delivery_date - date_order).days
+            if new_customer_lead < 0:
+                new_customer_lead = 0;
+            self.customer_lead = new_customer_lead
 
+    @api.onchange('customer_lead')
+    def on_change_customer_lead(self):
+        """
+        Änderung des Wertes für "Tage bis Auslieferung" ändert das Lieferdatum
+        """
+        values = {}
+        date_order = self.order_id.date_order if self.order_id else False
+        customer_lead = self.customer_lead
+        if not customer_lead:
+            customer_lead = 0
+        if date_order:
+            date_order = datetime.strptime(date_order.split(' ')[0], OE_DFORMAT)
+            self.eq_delivery_date = date_order + timedelta(days=int(customer_lead))
 
 
     def generate_line_text_with_attributes(self, attributes, product_id, eq_use_internal_description):
@@ -408,6 +560,8 @@ class eq_sale_order_line(models.Model):
 
             # Neue Version - Beispiel: Farbe: Blau, Typ: Klein
             self.name = self.generate_line_text_with_attributes(attributes, product_id, eq_use_internal_descriptionion)
+            if self.name == '':
+                self.name = ' '
 
         # vals['value']['delay'] = product_id.sale_delay
         return vals
@@ -415,3 +569,5 @@ class eq_sale_order_line(models.Model):
     eq_delivery_date = fields.Date('Delivery Date')
     get_delivery_date = fields.Char(compute="_get_delivery_date", string="Delivery", methode=True, store=False)
     eq_use_internal_description = fields.Boolean('Use internal description for sale orders')
+
+    eq_optional = fields.Boolean(string="Optional")

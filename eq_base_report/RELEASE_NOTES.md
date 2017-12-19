@@ -1,5 +1,41 @@
 ## Modul eq_base_report
 
+#### 16.11.2017
+#### Version 1.0.21
+##### CHG
+- Modul zu "Ausdrucke Basis" umbenannt
+
+#### 08.08.2017
+#### Version 1.0.20
+##### IMP
+- Erweiterung der Helperklasse um neue Funktion für optionale Produkte, VEP-138, eq_sale: Optionale Produkte, falsche Zwischensumme
+
+#### 04.08.2017
+#### Version 1.0.19
+##### FIX
+- Report Style: Schriftgrößen von PT auf PX umgestellt, damit die Version WKTHMLTOPDF 0.12.2.1 die PDF richtig rendert
+
+#### 02.08.2017
+#### Version 1.0.18
+##### CHG
+- Lieferschein-Kopf: Daten für Seite2+ nun enthalten
+
+#### 01.08.2017
+#### Version 1.0.17
+##### CHG
+- Lieferschein-Kopf: Vorerst den Infotext ausgeblendet
+
+#### 28.07.2017
+#### Version 1.0.16
+##### CHG
+- Modulbeschreibung erweitert
+
+#### 26.07.2017
+#### Version 1.0.15
+##### CHG
+- Neue Klasse mit Hilfsfunktionen für Reports
+
+
 #### 04.07.2017
 #### Version 1.0.14
 ##### ADD

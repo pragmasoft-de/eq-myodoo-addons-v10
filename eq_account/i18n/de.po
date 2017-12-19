@@ -74,7 +74,7 @@ msgstr "<span>Rechnungsdatum</span>"
 #. module: eq_account
 #: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
 msgid "<strong>For further information, please contact</strong>"
-msgstr "<strong>Ihr Ansprechpartner</strong>"
+msgstr "<strong>Bei Fragen wenden Sie sich bitte an</strong>"
 
 #. module: eq_account
 #: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
@@ -120,6 +120,11 @@ msgstr "<strong>Rabatt (%)</strong>"
 #: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
 msgid "<strong>Net price</strong>"
 msgstr "<strong>Nettopreis</strong>"
+
+#. module: eq_account
+#: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
+msgid "Invoice"
+msgstr "Rechnung"
 
 #. module: eq_account
 #: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
@@ -182,3 +187,64 @@ msgstr "<strong>Gesamtbetrag</strong>"
 msgid "<span>Total without taxes</span>"
 msgstr "<span>Nettobetrag</span>"
 
+#. module: eq_account
+#: model:ir.model.fields,field_description:eq_account.field_account_invoice_eq_use_page_break_after_header
+#: model:ir.ui.view,arch_db:eq_account.view_account_invoice_form_address_extension
+msgid "Page break after header text"
+msgstr "Seitenumbruch nach Kopftext"
+
+#. module: eq_account
+#: model:ir.model.fields,field_description:eq_account.field_account_invoice_eq_use_page_break_before_footer
+#: model:ir.ui.view,arch_db:eq_account.view_account_invoice_form_address_extension
+msgid "Page break before footer text"
+msgstr "Seitenumbruch vor dem Fußtext"
+
+#. module: eq_account
+#: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
+msgid "<strong>Delivery Condition:</strong>"
+msgstr "<strong>Lieferbedingungen:</strong>"
+
+#. module: eq_account
+#: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
+msgid "<span>Reference</span>"
+msgstr "<span>Referenz</span>"
+
+#. module: eq_account
+#: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
+msgid "<span>Customer Reference:</span>"
+msgstr "<span>Kundenreferenz:</span>"
+
+#. module: eq_account
+#: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
+msgid "<span>Order No:</span>"
+msgstr "<span>Auftragsnr.:</span>"
+
+#. module: eq_account
+#: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
+msgid "<span>Delivery No:</span>"
+msgstr "<span>Lieferscheinnr.:</span>"
+
+#. module: eq_account
+#: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
+msgid "<span>from</span>"
+msgstr "<span>vom</span>"
+
+#. module: eq_account
+#: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
+msgid "<span>/ Delivery Date (the date of service)</span>"
+msgstr "<span>/ Lieferdatum (Leistungstag)</span>"
+
+#. module: eq_account
+#: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
+msgid "Others"
+msgstr "Weitere Produkte"
+
+#. module: eq_account
+#: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
+msgid "<span>Your reference no.</span>"
+msgstr "<span>Ihre Referenz</span>"
+
+#. module: eq_account
+#: model:ir.ui.view,arch_db:eq_account.eq_report_invoice_document
+msgid "<span>Our reference no.</span>"
+msgstr "<span>Unsere Referenz</span>"

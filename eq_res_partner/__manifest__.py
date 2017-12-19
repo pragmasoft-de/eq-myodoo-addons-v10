@@ -20,9 +20,9 @@
 ##############################################################################
 
 {
-    'name': "Equitania Partner-Erweiterung",
+    'name': "Equitania Kontakt Optimierungen",
     'license': 'AGPL-3',
-    'version': '1.0.9',
+    'version': '1.0.14',
     'category': 'Partner',
     'description': """Extensions for res_partner""",
     'author': 'Equitania Software GmbH',
