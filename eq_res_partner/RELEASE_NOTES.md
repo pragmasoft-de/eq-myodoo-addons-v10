@@ -1,5 +1,20 @@
 ## Modul eq_res_partner
 
+#### 16.11.2017
+#### Version 1.0.14
+##### CHG
+- Umbenennen des Moduls zu Kontakt Optimierungen
+
+#### 18.09.2017
+#### Version 1.0.13
+##### CHG
+- Kanbanerweiterung wieder hinzugefügt.
+
+#### 15.09.2017
+#### Version 1.0.12
+##### CHG
+- Kanbanerweiterung entfernt.
+
 #### 31.07.2017
 #### Version 1.0.11
 ##### CHG

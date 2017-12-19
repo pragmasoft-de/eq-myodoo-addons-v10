@@ -37,6 +37,44 @@ class eq_sale_order_extension(models.Model):
 
     eq_use_page_break_after_header = fields.Boolean(string='Page break after header text')
     eq_use_page_break_before_footer = fields.Boolean(string='Page break before footer text')
+    eq_show_preview_button = fields.Boolean(default=False)
+
+    @api.multi
+    def action_quotation_send(self):
+        '''
+        This function opens a window to compose an email, with the edi sale template message loaded by default
+        '''
+        self.ensure_one()
+        ir_model_data = self.env['ir.model.data']
+        try:
+            template_id = ir_model_data.get_object_reference('eq_sale', 'new_email_template_edi_sale')[1]
+        except ValueError:
+            template_id = False
+        try:
+            compose_form_id = ir_model_data.get_object_reference('mail', 'email_compose_message_wizard_form')[1]
+        except ValueError:
+            compose_form_id = False
+        ctx = dict()
+        ctx.update({
+            'default_model': 'sale.order',
+            'default_res_id': self.ids[0],
+            'default_use_template': bool(template_id),
+            'default_template_id': template_id,
+            'default_composition_mode': 'comment',
+            'mark_so_as_sent': True,
+            'custom_layout': "eq_sale.eq_data_template_mail"
+        })
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(compose_form_id, 'form')],
+            'view_id': compose_form_id,
+            'target': 'new',
+            'context': ctx,
+        }
+
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
@@ -216,7 +254,7 @@ class eq_sale_order_extension(models.Model):
 
     # Report
     show_delivery_date = fields.Boolean(string='Show Delivery Date')
-    use_calendar_week = fields.Boolean('Use Calendar Week for Delivery Date[equitania]')
+    use_calendar_week = fields.Boolean('Use Calendar Week for Delivery Date[eq_sale]')
 
     @api.depends('order_line.price_total')
     def _amount_all(self):
@@ -316,6 +354,7 @@ class eq_sale_configuration_address(models.TransientModel):
         ir_values_obj.set_default('sale.order', 'default_search_only_company', self.default_search_only_company or False)
         ir_values_obj.set_default('sale.order', 'show_delivery_date', self.default_show_delivery_date)
         ir_values_obj.set_default('sale.order', 'use_calendar_week', self.default_use_calendar_week)
+        ir_values_obj.set_default('sale.order', 'eq_show_preview_button', self.default_eq_show_preview_button)
         ir_values_obj.set_default('sale.order.line', 'eq_use_internal_description', self.default_eq_use_internal_description)
 
         ir_config_obj.set_param('eq.use.text.from.order', self.eq_use_text_from_order)
@@ -331,6 +370,7 @@ class eq_sale_configuration_address(models.TransientModel):
         show_delivery_date = ir_values_obj.get_default('sale.order', 'show_delivery_date')
         use_calendar_week = ir_values_obj.get_default('sale.order', 'use_calendar_week')
         eq_use_internal_description = ir_values_obj.get_default('sale.order.line', 'eq_use_internal_description')
+        eq_show_preview_button = ir_values_obj.get_default('sale.order','eq_show_preview_button')
 
         eq_use_text_from_order = ir_config_obj.get_param('eq.use.text.from.order')
         eq_head_text_invoice = ir_config_obj.get_param('eq.head.text.invoice')
@@ -342,32 +382,46 @@ class eq_sale_configuration_address(models.TransientModel):
             'default_show_delivery_date': show_delivery_date,
             'default_use_calendar_week': use_calendar_week,
             'default_eq_use_internal_description': eq_use_internal_description,
+            'default_eq_show_preview_button': eq_show_preview_button,
             'eq_use_text_from_order': eq_use_text_from_order,
             'eq_head_text_invoice': eq_head_text_invoice,
             'eq_foot_text_invoice': eq_foot_text_invoice,
         }
 
+    @api.onchange('default_eq_show_preview_button')
+    def onchange_default_eq_show_preview_button(self):
+        sale_order_objs = self.env['sale.order'].search([])
+        if self.default_eq_show_preview_button:
+            for sale_order_obj in sale_order_objs:
+                values = {'eq_show_preview_button': True}
+                sale_order_obj.write(values)
+        else:
+            for sale_order_obj in sale_order_objs:
+                values = {'eq_show_preview_button' : False}
+                sale_order_obj.write(values)
+
+
     default_show_address = fields.Boolean(
-            string='Show street and city in the partner search of the Sale and Purchase Order [equitania]',
+            string='Show street and city in the partner search of the Sale and Purchase Order [eq_sale]',
             help="This adds the street and the city to the results of the partner search of the Sale and Purchase Order.")
-    default_search_only_company = fields.Boolean(string='Only Search for Companies [equitania]',
+    default_search_only_company = fields.Boolean(string='Only Search for Companies [eq_sale]',
                                                       help="Only Companies will be shown in the Customer search of the Sale and Purchase Order.")
-    group_product_rrp = fields.Boolean(string='Show RRP for products [equitania]', implied_group='eq_sale.group_product_rrp')
-    default_show_delivery_date = fields.Boolean(string='Show the Delivery Date on the Sale Order [equitania]',
+    group_product_rrp = fields.Boolean(string='Show RRP for products [eq_sale]', implied_group='eq_sale.group_product_rrp')
+    default_show_delivery_date = fields.Boolean(string='Show the Delivery Date on the Sale Order [eq_sale]',
                                                  help='The delivery date will be shown in the Sale Order',
                                                  default_model='sale.order')
-    default_use_calendar_week = fields.Boolean('Show Calendar Week for Delivery Date [equitania]',
+    default_use_calendar_week = fields.Boolean('Show Calendar Week for Delivery Date [eq_sale]',
                                                 help='The delivery date will be shown as a calendar week',
                                                 default_model='sale.order')
-    default_eq_use_internal_description = fields.Boolean('Use internal description for sale orders [equitania]',
+    default_eq_use_internal_description = fields.Boolean('Use internal description for sale orders [eq_sale]',
                                                           help='The internal description will be used for sale orders not the sale description',
                                                           default_model='sale.order.line')
-
-    eq_use_text_from_order = fields.Boolean(string="Use text from order [equitania]", required=False,
+    default_eq_show_preview_button = fields.Boolean(string="Show Preview-Button in Sale Order [eq_sale]")  # Angebots-Preview Button
+    eq_use_text_from_order = fields.Boolean(string="Use text from order [eq_sale]", required=False,
                                             default=False)  # Benutze Kopf- und Fusstext aus Auftrag
-    eq_head_text_invoice = fields.Html(string="Invoice head text [equitania]", required=False,
+    eq_head_text_invoice = fields.Html(string="Invoice head text [eq_sale]", required=False,
                                        default="")  # Kopftext - kann überall verwendet werden und ersetzt dadurch Odoo Standard
-    eq_foot_text_invoice = fields.Html(string="Invoice foot text [equitania]", required=False, default="")
+    eq_foot_text_invoice = fields.Html(string="Invoice foot text [eq_sale]", required=False, default="")
 
 
 class eq_sale_order_line(models.Model):
@@ -506,6 +560,8 @@ class eq_sale_order_line(models.Model):
 
             # Neue Version - Beispiel: Farbe: Blau, Typ: Klein
             self.name = self.generate_line_text_with_attributes(attributes, product_id, eq_use_internal_descriptionion)
+            if self.name == '':
+                self.name = ' '
 
         # vals['value']['delay'] = product_id.sale_delay
         return vals

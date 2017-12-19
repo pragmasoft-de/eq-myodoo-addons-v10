@@ -13,12 +13,15 @@ body {
     font-family: "Lucida Grande", Helvetica, Verdana, Arial, sans-serif;
 }
 
-
-.o_form_view.o_form_editable .o_form_field_many2manytags {
+/* definiert das Styling für die Inputfelder */
+.o_form_field_many2manytags,
+.o_form_view.o_form_editable .o_form_field_many2manytags,
+.o_form_view.o_form_editable .o_form_field_monetary {
     border: 2px solid #ccc;
     border-width: 0px 0px 2px 0px;
     border-radius: 5px;
 }
+
 
 .o_form_view {
 
@@ -79,6 +82,7 @@ body {
             }
         }
     }
+
 
     // Groups
     .o_td_label {

@@ -20,21 +20,21 @@
 ##############################################################################
 
 {
-    'name': 'Equitania Sale_CRM',
+    'name': 'Equitania Verkauf- & CRM Optimierungen',
     'license': 'AGPL-3',
-    'version': '1.0.1',
+    'version': '1.0.3',
     'description': """
         Extensions for sale_crm
     """,
     'author': 'Equitania Software GmbH',
     'website': 'www.myodoo.de',
-    'depends': ['base_setup', 'base', 'sale', 'crm', 'sale_crm'],
-    'category' : 'General Improvements',
+    #'depends': ['base_setup', 'base', 'sale', 'crm', 'sale_crm'],      # Sody: 09.08.2017 - original vor der Erweiterung der Docu
+    'depends': ['base_setup', 'base' , 'sale_crm'],
+    'category' : 'CRM Sale',
     'summary': 'Sale_crm extensions',
 
     'data': [
         "views/crm_view.xml",
-
     ],
     'demo': [],
     'css': ['base.css'],

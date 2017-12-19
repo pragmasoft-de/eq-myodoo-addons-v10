@@ -22,18 +22,22 @@
 {
     'name': "Equitania Setting Unbrand",
     'license': 'AGPL-3',
-    'version': '1.0.1',
-    'category': 'Branding',
-    'description': """Entfernt die Odoo Brandings und ersetzt Sie durch Equitania Links""",
+    'version': '1.0.5',
+    'category': 'Settings',
+    'description': """ Entfernt die Odoo Brandings und ersetzt Sie durch MyOdoo Links und Wiki-links """,
     'author': 'Equitania Software GmbH',
     'summary': 'Unbrand Extension',
     'website': 'www.myodoo.de',
-    #"depends" : ['base'],
+    'depends' : ['web_settings_dashboard','base_setup','report'],
     'data': [
             #'security/ir.model.access.csv',
-            #'views/eq_open_sale_order_line_view.xml',
-            #'views/stock_picking_view.xml',
+            #'style_extension.xml',      #wird derzeit nicht benötigt und deshalb deaktiviert
+            'views/report_settings.xml',
              ],
+    'qweb': [
+        'static/src/xml/dashboard_extension.xml',
+         ],
+
     "active": False,
-    "installable": False
+    "installable": True
 }

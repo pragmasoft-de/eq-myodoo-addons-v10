@@ -20,11 +20,11 @@
 ##############################################################################
 
 {
-    'name': "Equitania Pricelist",
+    'name': "Equitania Preislisten Optimierungen",
     'license': 'AGPL-3',
-    'version': '1.0.2',
+    'version': '1.0.5',
     'category': 'pricelist',
-    'description': """Extensions for pricelists""",
+    'description': """ Extension for pricelist-positions """,
     'author': 'Equitania Software GmbH',
     'summary': 'Pricelist Extension',
     'website': 'www.myodoo.de',
@@ -32,7 +32,6 @@
     'data': [
                 'security/ir.model.access.csv',
                 'views/eq_pricelist_view.xml',
-                'views/eq_pricelist_item_search_view.xml',
              ],
     "active": False,
     "installable": True

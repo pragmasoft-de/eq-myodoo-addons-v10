@@ -20,11 +20,11 @@
 ##############################################################################
 
 {
-    'name': 'Equitania Base',
+    'name': 'Equitania Basis',
     'license': 'AGPL-3',
-    'version': '1.0.4',
+    'version': '1.0.6',
     'description': """
-        Extensions for module eq_base
+        Basic fields for more EQ Modules
     """,
     'author': 'Equitania Software GmbH',
     'website': 'www.myodoo.de',
@@ -35,10 +35,10 @@
     'data': [
          "views/res_company_view.xml",
          "views/res_country_view.xml",
+         "views/eq_res_users_view.xml",
 
     ],
     'demo': [],
-    # 'css': ['base.css'],
     'installable': True,
     'auto_install': False,
 }

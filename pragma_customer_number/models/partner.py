@@ -35,6 +35,7 @@ class ResPartner(models.Model):
     cust_ref_print = fields.Char(_('Customer Reference (used in reports)'), readonly=True, invisible=True)
     auto_customer_ref = fields.Boolean(compute='_auto_customer_ref', store=False, readonly=True, invisible=True)
 
+    @api.one
     @api.depends('cust_auto_ref', 'cust_no_auto_ref')
     def _get_customer_number(self):
         ir_values = self.env['ir.values']
@@ -156,14 +157,14 @@ class ResPartner(models.Model):
     def write(self, vals):
         parent = False
 
-        if 'parent_id' in vals:
+        if 'parent_id' in vals and vals['parent_id']:
             parent = vals['parent_id']
 
         # wenn es eine übergeordnete Firma gibt, dann die Kundennummer der übergeordneten Firma übernehmen
         if parent:
             partner_obj = self.env['res.partner']
 
-            parent = partner_obj.read(parent)
+            parent = partner_obj.browse([parent])
 
             if parent['customer']:
                 vals['cust_auto_ref'] = parent['customer_number']
@@ -173,3 +174,13 @@ class ResPartner(models.Model):
                 vals['cust_ref_print'] = vals['cust_auto_ref']
 
         return super(ResPartner, self).write(vals)
+
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    @api.model
+    def create(self, vals):
+        self = self.with_context(is_user=True)
+        res = super(ResUsers, self).create(vals)
+        return res

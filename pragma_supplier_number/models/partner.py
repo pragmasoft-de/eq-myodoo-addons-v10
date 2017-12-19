@@ -35,6 +35,7 @@ class ResPartner(models.Model):
     supp_ref_print = fields.Char(_('Supplier Reference (used in reports)'), readonly=True, invisible=True)
     auto_supplier_ref = fields.Boolean(compute='_auto_supplier_ref', store=False, readonly=True, invisible=True)
 
+    @api.one
     @api.depends('supp_auto_ref', 'supp_no_auto_ref')
     def _get_supplier_number(self):
         default_auto_supplier_ref = self.env['ir.values'].get_default('res.partner', 'default_auto_supplier_ref')
@@ -152,13 +153,13 @@ class ResPartner(models.Model):
     def write(self, vals):
         parent = False
 
-        if 'parent_id' in vals:
+        if 'parent_id' in vals and vals['parent_id']:
             parent = vals['parent_id']
 
         # wenn es eine übergeordnete Firma gibt, dann die Lieferantennummer der übergeordneten Firma übernehmen
         if parent:
             partner_obj = self.env['res.partner']
-            parent = partner_obj.read(parent)
+            parent = partner_obj.browse([parent])
 
             if parent['supplier']:
                 vals['supp_auto_ref'] = parent['supplier_number']
